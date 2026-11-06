@@ -38,22 +38,21 @@ script is reset to its old copy when the game closes)
   Colours: a name (White, Orange, SkyBlue...), #RRGGBB, R,G,B or A,R,G,B. Names stay names when it saves.
   scripts\IVTachometer.log gets one line each start; Log=1 adds the details (for bug reports).
 
-Laptops with two graphics chips
--------------------------------
-If the gauge vanishes or flickers, the game may be getting moved between the laptop's built-in graphics and its
-NVIDIA / AMD card. Try these, easiest first:
-  1. Play in borderless windowed mode instead of exclusive fullscreen.
-  2. Give GTAIV.exe the dedicated card: Windows Settings > System > Display > Graphics (High performance), or
-     NVIDIA Control Panel > Manage 3D settings > Program settings.
-  3. If the laptop has a MUX switch, set it to the dedicated card ("Discrete" / "dGPU only") in the maker's own app,
-     for example MSI Center (MSI), Armoury Crate (ASUS), Lenovo Vantage / Legion Space (Lenovo), OMEN Gaming Hub (HP),
-     Alienware Command Center (Dell) or NitroSense / PredatorSense (Acer). It needs a restart and uses more battery.
-     (Tested on an MSI laptop with MSI Center's Discrete Graphics mode.)
+Nothing shows on screen?
+------------------------
+On a few PCs, right after a quick restart of the game, IV-SDK .NET's on-screen drawing can stay hidden while
+everything keeps running underneath (this gauge, the IV-SDK .NET console, other mods that draw with it). It comes
+from start-up timing (the game resets its display while mods start up), not from this mod or the mods below.
+Quick fix: Pause > Graphics, change the refresh rate (or resolution), apply, then change it back.
+Most players will never see this.
 
 Works with
 ----------
-Kunar26's Working Speedometer (and our 1.2.0.59 update of it), and our upcoming IVAutoCare and IVWrecks.
-Not meant to run with our upcoming IV Dashboard, which has its own gauges: use one or the other.
+Tested together in one install, GTA IV Complete Edition 1.2.0.59: Fusion Fix (including its Vulkan renderer),
+SISCO 1.0.8, DLSS-IV, Liberty Tweaks 1.7, Liberty's Legacy (with Aru's ScriptHook), and Kunar26's Working
+Speedometer in our IV-SDK .NET / 1.2.0.59 update (made to sit together).
+Not tested with other HUD or minimap mods yet. Not meant to run with our upcoming IV Dashboard, which has its own
+gauges: use one or the other.
 
 Source and building
 -------------------
