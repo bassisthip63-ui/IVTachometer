@@ -6,7 +6,7 @@ A white rev-counter arc with a red zone and a red needle sits around the lower l
 
 It works without the speedometer too, using the speedometer's default layout.
 
-Download the ready-to-use mod from Nexus Mods. This repository holds the source.
+**Download:** [IV Tachometer on Nexus Mods](https://www.nexusmods.com/gta4/mods/1750). It pairs with our [Working Speedometer update for IV-SDK .NET](https://www.nexusmods.com/gta4/mods/1749). This repository holds the source.
 
 ---
 
