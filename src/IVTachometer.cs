@@ -85,6 +85,7 @@ namespace IVTachometer
         bool hidden, hideWas, adjustWas, adjusting; int adjustStep;
         bool gaugeUp;                               // last tick: in a vehicle you're driving, with the gauge on
         bool settingsDirty; int lastSettingsChange; DateTime iniTime = DateTime.MinValue;
+        bool rpmErrLogged; int rpmLogAt;
         int offLightsB, offLightsC;                 // vehicle light flags in game memory (0 = unknown game version)
 
         // draw side
@@ -244,7 +245,9 @@ namespace IVTachometer
             if (Environment.TickCount - vehicleSince < 1000) return st;                 // same 1 s wait as the speedometer
 
             float rpm = 0f;
-            try { rpm = veh.CurrentRPM; } catch { }
+            try { rpm = veh.CurrentRPM; }
+            catch (Exception ex) { if (!rpmErrLogged) { rpmErrLogged = true; Log("engine speed: the game/IV-SDK .NET did not give it (" + ex.GetType().Name + ": " + ex.Message + ")"); } }
+            if (S.Log && Environment.TickCount - rpmLogAt > 2000) { rpmLogAt = Environment.TickCount; Log("engine speed " + rpm.ToString("0.000", CultureInfo.InvariantCulture)); }
             st.Rpm = Math.Max(0f, Math.Min(1f, rpm / Math.Max(0.1f, S.FullRpm)));
             st.Night = IsNight(veh);
             st.Visible = true;
