@@ -42,6 +42,7 @@ namespace IVTachometer
             public Color ArcColor = Color.White, RedZoneColor = Color.White, NeedleColor = Color.White;
             // night: used while the vehicle's lights are on (Mode AUTO), always (ON) or never (OFF)
             public string NightMode = "AUTO";
+            public bool RpmFromMemory;   // testing: always read the engine rpm from game memory (not written to the cfg)
             public Color NightArcColor = Color.FromArgb(255, 170, 178, 190), NightRedZoneColor = Color.FromArgb(255, 215, 200, 200),
                          NightNeedleColor = Color.FromArgb(255, 225, 215, 215);
             // digital readout
@@ -85,8 +86,8 @@ namespace IVTachometer
         bool hidden, hideWas, adjustWas, adjusting; int adjustStep;
         bool gaugeUp;                               // last tick: in a vehicle you're driving, with the gauge on
         bool settingsDirty; int lastSettingsChange; DateTime iniTime = DateTime.MinValue;
-        bool rpmErrLogged; int rpmLogAt;
-        int offLightsB, offLightsC;                 // vehicle light flags in game memory (0 = unknown game version)
+        bool rpmErrLogged, rpmMemLogged; int rpmLogAt;
+        int offLightsB, offLightsC, offRpm;         // + the engine rpm float (fallback when Vehicle.CurrentRPM gives nothing)                 // vehicle light flags in game memory (0 = unknown game version)
 
         // draw side
         float shown; int lastDrawTick, lastDrawAt, firstShowAt, lastResW, lastResH; bool firstRefreshDone;
@@ -247,7 +248,16 @@ namespace IVTachometer
             float rpm = 0f;
             try { rpm = veh.CurrentRPM; }
             catch (Exception ex) { if (!rpmErrLogged) { rpmErrLogged = true; Log("engine speed: the game/IV-SDK .NET did not give it (" + ex.GetType().Name + ": " + ex.Message + ")"); } }
-            if (S.Log && Environment.TickCount - rpmLogAt > 2000) { rpmLogAt = Environment.TickCount; Log("engine speed " + rpm.ToString("0.000", CultureInfo.InvariantCulture)); }
+            // some script hosts (ScriptHookDotNet on the Complete Edition) give 0 here: read the engine's rpm from the
+            // vehicle in game memory instead, where this game version is known (same place IV-SDK .NET reads it)
+            string src = "CurrentRPM";
+            if ((rpm <= 0f || S.RpmFromMemory) && offRpm != 0)
+            {
+                long vp = 0; try { vp = (long)(uint)((GTA.@base.iAddressableObject)veh).MemoryAddress; } catch { }
+                float mr;
+                if (vp != 0 && ReadFloat(vp + offRpm, out mr) && mr > 0f && mr < 1.5f) { rpm = mr; src = "memory"; if (!rpmMemLogged) { rpmMemLogged = true; Log("engine speed: Vehicle.CurrentRPM gave 0, reading it from game memory instead"); } }
+            }
+            if (S.Log && Environment.TickCount - rpmLogAt > 2000) { rpmLogAt = Environment.TickCount; Log("engine speed " + rpm.ToString("0.000", CultureInfo.InvariantCulture) + " (" + src + ")"); }
             st.Rpm = Math.Max(0f, Math.Min(1f, rpm / Math.Max(0.1f, S.FullRpm)));
             st.Night = IsNight(veh);
             st.Visible = true;
@@ -263,8 +273,8 @@ namespace IVTachometer
                 long b = System.Diagnostics.Process.GetCurrentProcess().MainModule.BaseAddress.ToInt64();
                 int pe = System.Runtime.InteropServices.Marshal.ReadInt32(new IntPtr(b + 0x3C));
                 uint stamp = (uint)System.Runtime.InteropServices.Marshal.ReadInt32(new IntPtr(b + pe + 8));
-                if (stamp == 0x57C6FB75u) { offLightsB = 3941; offLightsC = 3945; }        // 1.0.8.0
-                else if (stamp == 0x63D3E735u) { offLightsB = 3861; offLightsC = 3865; }   // 1.2.0.59 (0x50 lower)
+                if (stamp == 0x57C6FB75u) { offLightsB = 3941; offLightsC = 3945; offRpm = 0x638; }        // 1.0.8.0
+                else if (stamp == 0x63D3E735u) { offLightsB = 3861; offLightsC = 3865; offRpm = 0x688; }   // 1.2.0.59 (0x50 lower)
                 Log(offLightsB != 0 ? "night: vehicle light flags from game memory" : "night: unknown game version, using Vehicle.LightsOn");
             }
             catch { offLightsB = offLightsC = 0; }
@@ -282,6 +292,21 @@ namespace IVTachometer
                 byte[] buf = readBuf; int read;
                 if (!ReadProcessMemory(GetCurrentProcess(), new IntPtr(unchecked((int)(uint)address)), buf, 1, out read) || read != 1) return false;
                 value = buf[0]; return true;
+            }
+            catch { return false; }
+        }
+
+        static readonly byte[] readBuf4 = new byte[4];
+        static bool ReadFloat(long address, out float value)
+        {
+            value = 0f;
+            if (address < 0x10000 || address > 0xFFFFFFFFL) return false;
+            try
+            {
+                int read;
+                if (!ReadProcessMemory(GetCurrentProcess(), new IntPtr(unchecked((int)(uint)address)), readBuf4, 4, out read) || read != 4) return false;
+                value = BitConverter.ToSingle(readBuf4, 0);
+                return !float.IsNaN(value) && !float.IsInfinity(value);
             }
             catch { return false; }
         }
@@ -667,6 +692,7 @@ namespace IVTachometer
                         case "showforpassenger": n.ShowForPassenger = Bool(x, n.ShowForPassenger); break;
                         case "showredzone": n.ShowRedZone = Bool(x, n.ShowRedZone); break;
                         case "log": n.Log = Bool(x, n.Log); break;
+                        case "rpmfrommemory": n.RpmFromMemory = Bool(x, n.RpmFromMemory); break;
                         case "hidekey": n.HideKey = KeyOf(x, n.HideKey); break;
                         case "adjustkey": n.AdjustKey = KeyOf(x, n.AdjustKey); break;
                         case "scale": n.Scale = Num(x, n.Scale, 0.5f, 2f); break;
