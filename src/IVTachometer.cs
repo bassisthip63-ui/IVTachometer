@@ -86,7 +86,7 @@ namespace IVTachometer
         bool hidden, hideWas, adjustWas, adjusting; int adjustStep;
         bool gaugeUp;                               // last tick: in a vehicle you're driving, with the gauge on
         bool settingsDirty; int lastSettingsChange; DateTime iniTime = DateTime.MinValue;
-        bool rpmErrLogged, rpmMemLogged; int rpmLogAt, rpmRawAt, rpmScanAt; List<int> rpmScan;
+        bool rpmErrLogged, rpmMemLogged; int rpmLogAt, rpmRawAt;
         int offLightsB, offLightsC, offRpm;         // + the engine rpm float (fallback when Vehicle.CurrentRPM gives nothing)                 // vehicle light flags in game memory (0 = unknown game version)
 
         // draw side
@@ -258,19 +258,6 @@ namespace IVTachometer
                 if (ok && mr > 0f && mr < 1.5f) { rpm = mr; src = "memory"; if (!rpmMemLogged) { rpmMemLogged = true; Log("engine speed: reading it from game memory (+0x" + offRpm.ToString("X") + ")"); } }
                 else if (S.Log && Environment.TickCount - rpmRawAt > 2000) { rpmRawAt = Environment.TickCount; Log("engine speed in memory: " + (vp == 0 ? "no vehicle address" : !ok ? "not readable at +0x" + offRpm.ToString("X") : "raw " + mr.ToString("0.###", CultureInfo.InvariantCulture) + " at +0x" + offRpm.ToString("X") + " (out of range, not used)")); }
             }
-            // TEST ONLY (RpmFromMemory=1 + Log=1): search the vehicle in memory for the value CurrentRPM gave, to find
-            // where this game version keeps it. Offsets that match every sample survive; logged every 2 s.
-            if (S.RpmFromMemory && S.Log && src == "CurrentRPM" && rpm > 0.05f && Environment.TickCount - rpmScanAt > 2000)
-            {
-                rpmScanAt = Environment.TickCount;
-                long vp = 0; try { vp = (long)(uint)((GTA.@base.iAddressableObject)veh).MemoryAddress; } catch { }
-                var hits = new List<int>();
-                if (vp != 0)
-                    for (int o = 0; o < 0x1400; o += 4) { float f; if (ReadFloat(vp + o, out f) && Math.Abs(f - rpm) < 0.004f) hits.Add(o); }
-                if (rpmScan == null) rpmScan = hits; else rpmScan = rpmScan.FindAll(hits.Contains);
-                Log("rpm search: vehicle at 0x" + vp.ToString("X") + ", " + hits.Count + " match " + rpm.ToString("0.000", CultureInfo.InvariantCulture)
-                    + "; still matching every sample: " + (rpmScan.Count == 0 ? "none" : string.Join(" ", rpmScan.ConvertAll(o => "+0x" + o.ToString("X")).ToArray())));
-            }
             if (S.Log && Environment.TickCount - rpmLogAt > 2000) { rpmLogAt = Environment.TickCount; Log("engine speed " + rpm.ToString("0.000", CultureInfo.InvariantCulture) + " (" + src + ")"); }
             st.Rpm = Math.Max(0f, Math.Min(1f, rpm / Math.Max(0.1f, S.FullRpm)));
             st.Night = IsNight(veh);
@@ -287,8 +274,8 @@ namespace IVTachometer
                 long b = System.Diagnostics.Process.GetCurrentProcess().MainModule.BaseAddress.ToInt64();
                 int pe = System.Runtime.InteropServices.Marshal.ReadInt32(new IntPtr(b + 0x3C));
                 uint stamp = (uint)System.Runtime.InteropServices.Marshal.ReadInt32(new IntPtr(b + pe + 8));
-                if (stamp == 0x57C6FB75u) { offLightsB = 3941; offLightsC = 3945; offRpm = 0x638; }        // 1.0.8.0
-                else if (stamp == 0x63D3E735u) { offLightsB = 3861; offLightsC = 3865; offRpm = 0x688; }   // 1.2.0.59 (0x50 lower)
+                if (stamp == 0x57C6FB75u) { offLightsB = 3941; offLightsC = 3945; offRpm = 0x688; }        // 1.0.8.0
+                else if (stamp == 0x63D3E735u) { offLightsB = 3861; offLightsC = 3865; offRpm = 0x638; }   // 1.2.0.59 (0x50 lower)
                 Log(offLightsB != 0 ? "night: vehicle light flags from game memory" : "night: unknown game version, using Vehicle.LightsOn");
             }
             catch { offLightsB = offLightsC = 0; }
