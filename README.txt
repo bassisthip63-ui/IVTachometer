@@ -1,5 +1,5 @@
-IV Tachometer 1.0 - a rev counter for GTA IV that wraps the minimap with the SpeedoMeter mod
-===========================================================================================
+IV Tachometer 1.0.1 beta - a rev counter for GTA IV that wraps the minimap with the SpeedoMeter mod
+===================================================================================================
 
 A white rev-counter arc with a red zone and a red needle, around the lower left of the minimap, just outside the
 SpeedoMeter mod's ring, plus a digital RPM readout. 0 rpm is at the bottom and it sweeps clockwise up to the left,
@@ -7,8 +7,17 @@ the same way round as the speedometer. It reads the speedometer's settings (Spee
 and the speedometer's gear ring shows the gear. Night colours switch on with the vehicle's lights.
 Without the speedometer it still works, using the speedometer's default layout.
 
-Requirements: ScriptHookDotNet, or IV-SDK .NET with its ScriptHookDotNet support. Works on any game version
-(night colours read the lights from game memory on 1.0.8.0 and 1.2.0.59, and from ScriptHookDotNet elsewhere).
+Requirements: IV-SDK .NET (with its ScriptHookDotNet support) or ScriptHookDotNet on its own. Nothing else.
+Works on any game version (night colours read the lights from game memory on 1.0.8.0 and 1.2.0.59, and from
+ScriptHookDotNet elsewhere). If your script host gives no engine speed (plain ScriptHookDotNet on the Complete
+Edition), the tach reads it from game memory on 1.2.0.59.
+
+New in 1.0.1 beta
+-----------------
+- Fixed: the needle didn't move with plain ScriptHookDotNet on the Complete Edition (1.2.0.59). It now reads the
+  engine speed from game memory when the script host gives none. Thanks to Tubthump for the report.
+- Why beta: the memory reading was tested on 1.2.0.59 by forcing it on under IV-SDK .NET. It hasn't been
+  confirmed under plain ScriptHookDotNet yet. The beta tag comes off once it has.
 
 Install
 -------
@@ -53,6 +62,36 @@ SISCO 1.0.8, DLSS-IV, Liberty Tweaks 1.7, Liberty's Legacy (with Aru's ScriptHoo
 Speedometer in our IV-SDK .NET / 1.2.0.59 update (made to sit together).
 Not tested with other HUD or minimap mods yet. Not meant to run with our upcoming IV Dashboard, which has its own
 gauges: use one or the other.
+
+What I build by
+---------------
+- Immersive and fun, never annoying: there when you glance at it, out of the way when you don't.
+- Make mod love, not mod war: made to sit with Kunar26's Working Speedometer and the mods under "Works with".
+  It stays off Tab and the D-pad buttons other popular mods use; adjust is Shift+F10 because others use F10.
+- Honest: only what's been tested gets claimed; "Works with" lists the mods it was actually run with.
+- Credit where it's due: the idea came from tartexs's RpmGauge script and is credited; nobody's code or files
+  are used; the readout font is used under its free licence.
+- No game files shipped: nothing from Rockstar is included.
+- Your game, your rules: size, angle, opacity, colours, night colours and the readout's text, font, size and
+  position, set in the cfg or live in game. The red zone, readout and night colours each switch off on their own.
+
+How it was built and tested
+---------------------------
+Rome wasn't built in a day, and neither were these mods.
+- One feature at a time: arc, needle, readout, night colours and adjust mode, each tested in game before the next.
+- Tested, then tested some more: new games, saved games, day and night, and repeated restarts.
+- Logs, not guesses: the detailed logs (Log=1) were read line by line to track down problems. The 1.0.1 fix came
+  from one, which showed exactly where the engine speed was, and wasn't, being read.
+- Real machines: tested on GTA IV Complete Edition 1.2.0.59.
+- Plays nice with other mods: see "Works with".
+- A final optimization pass before release: test code removed, per-frame work kept light, logging cut back to
+  one start-up line.
+
+Found a problem?
+----------------
+No amount of testing catches everything, and every setup is different. Constructive bug reports are very welcome:
+what happened, what you were doing, your game version, your script host (IV-SDK .NET or ScriptHookDotNet), other
+mods, and IVTachometer.log with Log=1. Rants aren't bug reports, and they'll be treated that way.
 
 Source and building
 -------------------

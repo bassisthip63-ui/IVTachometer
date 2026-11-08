@@ -1,4 +1,4 @@
-# IV Tachometer 1.0
+# IV Tachometer 1.0.1 beta
 
 **A rev counter for GTA IV that wraps the minimap, made to sit with Kunar26's Working Speedometer.**
 
@@ -12,8 +12,14 @@ It works without the speedometer too, using the speedometer's default layout.
 
 ## What you need
 
-- **ScriptHookDotNet**, or **IV-SDK .NET** with its ScriptHookDotNet support.
+- **IV-SDK .NET** (with its ScriptHookDotNet support) **or ScriptHookDotNet** on its own. Nothing else.
 - Any game version. Night colours read the lights from game memory on 1.0.8.0 and 1.2.0.59, and from ScriptHookDotNet elsewhere.
+- If your script host doesn't give the engine speed (plain ScriptHookDotNet on the Complete Edition doesn't), the tach reads it from game memory on 1.2.0.59.
+
+## What's new in 1.0.1 beta
+
+- **Fixed:** the needle didn't move with plain ScriptHookDotNet on the Complete Edition (1.2.0.59). It now reads the engine speed from game memory when the script host gives none. Thanks to Tubthump for the report.
+- **Why beta:** the new memory reading was tested on 1.2.0.59 by forcing it on under IV-SDK .NET. It hasn't been confirmed under plain ScriptHookDotNet yet. The beta tag comes off once it has.
 
 ## Install
 
@@ -66,6 +72,28 @@ Tested together in one install, GTA IV Complete Edition 1.2.0.59:
 - Kunar26's Working Speedometer, in our IV-SDK .NET / 1.2.0.59 update - made to sit together
 
 Not tested with other HUD or minimap mods yet. It isn't meant to run with our upcoming IV Dashboard, which has its own gauges: use one or the other.
+
+## What I build by
+
+- **Immersive and fun, never annoying.** It's there when you glance at it and stays out of the way when you don't.
+- **Make mod love, not mod war.** Made to sit with Kunar26's Working Speedometer and the mods under "Works with". It stays off Tab and the D-pad buttons other popular mods use, and its adjust key is `Shift+F10`, not `F10`, because other mods use `F10`.
+- **Honest.** Only what's been tested gets claimed. "Works with" lists the mods it was actually run with.
+- **Credit where it's due.** The idea came from tartexs's 2012 RpmGauge script, and it's credited. No one else's code or files are used, and the readout font is used under its free licence.
+- **No game files shipped.** Nothing from Rockstar is included.
+- **Your game, your rules.** Size, angle, opacity, colours, night colours, the readout's text, font, size and position can all be set in the cfg or live in game. The red zone, the readout and the night colours each have their own on/off switch.
+
+## How it was built and tested
+
+*Rome wasn't built in a day, and neither were these mods.*
+
+- **One feature at a time.** The arc, the needle, the readout, night colours and adjust mode were each built and tested in game before the next one started.
+- **Tested, then tested some more.** New games, saved games, day and night, and repeated restarts, because some problems only show up on the second or third launch.
+- **Logs, not guesses.** With `Log=1` it writes a detailed log, and those logs were read line by line to track down problems. The 1.0.1 fix came from one: the log showed exactly where the engine speed was, and wasn't, being read.
+- **Real machines.** Tested on GTA IV Complete Edition 1.2.0.59.
+- **Plays nice with other mods.** See "Works with" above.
+- **A final optimization pass before release.** Test code removed, per-frame work kept light, and logging cut back to one start-up line.
+
+**Found a problem?** No amount of testing catches everything, and every setup is different. A constructive bug report is very welcome: what happened, what you were doing, your game version, your script host (IV-SDK .NET or ScriptHookDotNet) and other mods, and `IVTachometer.log` with `Log=1`. Rants aren't bug reports, and they'll be treated that way.
 
 ## Building
 

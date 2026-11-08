@@ -23,7 +23,7 @@ namespace IVTachometer
 {
     public class Tachometer : Script
     {
-        const string Version = "1.0";
+        const string Version = "1.0.1 beta";
         // ---- the artwork's geometry (must match art\make_ring_art.py) -----------------------------------------
         const float ArtSpan = 2.6f;                 // the arc pictures are 2.6 x the speedometer ring radius, centred on the radar
         const float ArtStart = 258f, ArtEnd = 186f; // degrees (180 = left of the ring, 270 = bottom): 0 rpm .. full
@@ -42,7 +42,6 @@ namespace IVTachometer
             public Color ArcColor = Color.White, RedZoneColor = Color.White, NeedleColor = Color.White;
             // night: used while the vehicle's lights are on (Mode AUTO), always (ON) or never (OFF)
             public string NightMode = "AUTO";
-            public bool RpmFromMemory;   // testing: always read the engine rpm from game memory (not written to the cfg)
             public Color NightArcColor = Color.FromArgb(255, 170, 178, 190), NightRedZoneColor = Color.FromArgb(255, 215, 200, 200),
                          NightNeedleColor = Color.FromArgb(255, 225, 215, 215);
             // digital readout
@@ -251,7 +250,7 @@ namespace IVTachometer
             // some script hosts (ScriptHookDotNet on the Complete Edition) give 0 here: read the engine's rpm from the
             // vehicle in game memory instead, where this game version is known (same place IV-SDK .NET reads it)
             string src = "CurrentRPM";
-            if ((rpm <= 0f || S.RpmFromMemory) && offRpm != 0)
+            if (rpm <= 0f && offRpm != 0)
             {
                 long vp = 0; try { vp = (long)(uint)((GTA.@base.iAddressableObject)veh).MemoryAddress; } catch { }
                 float mr = 0f; bool ok = vp != 0 && ReadFloat(vp + offRpm, out mr);
@@ -693,7 +692,6 @@ namespace IVTachometer
                         case "showforpassenger": n.ShowForPassenger = Bool(x, n.ShowForPassenger); break;
                         case "showredzone": n.ShowRedZone = Bool(x, n.ShowRedZone); break;
                         case "log": n.Log = Bool(x, n.Log); break;
-                        case "rpmfrommemory": n.RpmFromMemory = Bool(x, n.RpmFromMemory); break;
                         case "hidekey": n.HideKey = KeyOf(x, n.HideKey); break;
                         case "adjustkey": n.AdjustKey = KeyOf(x, n.AdjustKey); break;
                         case "scale": n.Scale = Num(x, n.Scale, 0.5f, 2f); break;
