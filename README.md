@@ -1,4 +1,4 @@
-# IV Tachometer 1.0.1 beta
+# IV Tachometer 1.0.1
 
 **A rev counter for GTA IV that wraps the minimap, made to sit with Kunar26's Working Speedometer.**
 
@@ -16,10 +16,10 @@ It works without the speedometer too, using the speedometer's default layout.
 - Any game version. Night colours read the lights from game memory on 1.0.8.0 and 1.2.0.59, and from ScriptHookDotNet elsewhere.
 - If your script host doesn't give the engine speed (plain ScriptHookDotNet on the Complete Edition doesn't), the tach reads it from game memory on 1.2.0.59.
 
-## What's new in 1.0.1 beta
+## What's new in 1.0.1
 
 - **Fixed:** the needle didn't move with plain ScriptHookDotNet on the Complete Edition (1.2.0.59). It now reads the engine speed from game memory when the script host gives none. Thanks to Tubthump for the report.
-- **Why beta:** the new memory reading was tested on 1.2.0.59 by forcing it on under IV-SDK .NET. It hasn't been confirmed under plain ScriptHookDotNet yet. The beta tag comes off once it has.
+- **Tested both ways** on 1.2.0.59: under IV-SDK .NET, and under ScriptHookDotNet 1.7.1.9 on its own.
 
 ## Install
 
@@ -89,7 +89,7 @@ Not tested with other HUD or minimap mods yet. It isn't meant to run with our up
 - **One feature at a time.** The arc, the needle, the readout, night colours and adjust mode were each built and tested in game before the next one started.
 - **Tested, then tested some more.** New games, saved games, day and night, and repeated restarts, because some problems only show up on the second or third launch.
 - **Logs, not guesses.** With `Log=1` it writes a detailed log, and those logs were read line by line to track down problems. The 1.0.1 fix came from one: the log showed exactly where the engine speed was, and wasn't, being read.
-- **Real machines.** Tested on GTA IV Complete Edition 1.2.0.59.
+- **Real machines.** Tested on GTA IV Complete Edition 1.2.0.59, under both IV-SDK .NET and ScriptHookDotNet 1.7.1.9.
 - **Plays nice with other mods.** See "Works with" above.
 - **A final optimization pass before release.** Test code removed, per-frame work kept light, and logging cut back to one start-up line.
 

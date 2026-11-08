@@ -1,5 +1,5 @@
-IV Tachometer 1.0.1 beta - a rev counter for GTA IV that wraps the minimap with the SpeedoMeter mod
-===================================================================================================
+IV Tachometer 1.0.1 - a rev counter for GTA IV that wraps the minimap with the SpeedoMeter mod
+==============================================================================================
 
 A white rev-counter arc with a red zone and a red needle, around the lower left of the minimap, just outside the
 SpeedoMeter mod's ring, plus a digital RPM readout. 0 rpm is at the bottom and it sweeps clockwise up to the left,
@@ -12,12 +12,11 @@ Works on any game version (night colours read the lights from game memory on 1.0
 ScriptHookDotNet elsewhere). If your script host gives no engine speed (plain ScriptHookDotNet on the Complete
 Edition), the tach reads it from game memory on 1.2.0.59.
 
-New in 1.0.1 beta
------------------
+New in 1.0.1
+------------
 - Fixed: the needle didn't move with plain ScriptHookDotNet on the Complete Edition (1.2.0.59). It now reads the
   engine speed from game memory when the script host gives none. Thanks to Tubthump for the report.
-- Why beta: the memory reading was tested on 1.2.0.59 by forcing it on under IV-SDK .NET. It hasn't been
-  confirmed under plain ScriptHookDotNet yet. The beta tag comes off once it has.
+- Tested both ways on 1.2.0.59: under IV-SDK .NET, and under ScriptHookDotNet 1.7.1.9 on its own.
 
 Install
 -------
@@ -82,7 +81,7 @@ Rome wasn't built in a day, and neither were these mods.
 - Tested, then tested some more: new games, saved games, day and night, and repeated restarts.
 - Logs, not guesses: the detailed logs (Log=1) were read line by line to track down problems. The 1.0.1 fix came
   from one, which showed exactly where the engine speed was, and wasn't, being read.
-- Real machines: tested on GTA IV Complete Edition 1.2.0.59.
+- Real machines: tested on GTA IV Complete Edition 1.2.0.59, under both IV-SDK .NET and ScriptHookDotNet 1.7.1.9.
 - Plays nice with other mods: see "Works with".
 - A final optimization pass before release: test code removed, per-frame work kept light, logging cut back to
   one start-up line.

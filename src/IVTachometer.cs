@@ -23,7 +23,7 @@ namespace IVTachometer
 {
     public class Tachometer : Script
     {
-        const string Version = "1.0.1 beta";
+        const string Version = "1.0.1";
         // ---- the artwork's geometry (must match art\make_ring_art.py) -----------------------------------------
         const float ArtSpan = 2.6f;                 // the arc pictures are 2.6 x the speedometer ring radius, centred on the radar
         const float ArtStart = 258f, ArtEnd = 186f; // degrees (180 = left of the ring, 270 = bottom): 0 rpm .. full
