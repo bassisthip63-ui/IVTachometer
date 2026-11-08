@@ -86,7 +86,7 @@ namespace IVTachometer
         bool hidden, hideWas, adjustWas, adjusting; int adjustStep;
         bool gaugeUp;                               // last tick: in a vehicle you're driving, with the gauge on
         bool settingsDirty; int lastSettingsChange; DateTime iniTime = DateTime.MinValue;
-        bool rpmErrLogged, rpmMemLogged; int rpmLogAt;
+        bool rpmErrLogged, rpmMemLogged; int rpmLogAt, rpmRawAt;
         int offLightsB, offLightsC, offRpm;         // + the engine rpm float (fallback when Vehicle.CurrentRPM gives nothing)                 // vehicle light flags in game memory (0 = unknown game version)
 
         // draw side
@@ -254,8 +254,9 @@ namespace IVTachometer
             if ((rpm <= 0f || S.RpmFromMemory) && offRpm != 0)
             {
                 long vp = 0; try { vp = (long)(uint)((GTA.@base.iAddressableObject)veh).MemoryAddress; } catch { }
-                float mr;
-                if (vp != 0 && ReadFloat(vp + offRpm, out mr) && mr > 0f && mr < 1.5f) { rpm = mr; src = "memory"; if (!rpmMemLogged) { rpmMemLogged = true; Log("engine speed: Vehicle.CurrentRPM gave 0, reading it from game memory instead"); } }
+                float mr = 0f; bool ok = vp != 0 && ReadFloat(vp + offRpm, out mr);
+                if (ok && mr > 0f && mr < 1.5f) { rpm = mr; src = "memory"; if (!rpmMemLogged) { rpmMemLogged = true; Log("engine speed: reading it from game memory (+0x" + offRpm.ToString("X") + ")"); } }
+                else if (S.Log && Environment.TickCount - rpmRawAt > 2000) { rpmRawAt = Environment.TickCount; Log("engine speed in memory: " + (vp == 0 ? "no vehicle address" : !ok ? "not readable at +0x" + offRpm.ToString("X") : "raw " + mr.ToString("0.###", CultureInfo.InvariantCulture) + " at +0x" + offRpm.ToString("X") + " (out of range, not used)")); }
             }
             if (S.Log && Environment.TickCount - rpmLogAt > 2000) { rpmLogAt = Environment.TickCount; Log("engine speed " + rpm.ToString("0.000", CultureInfo.InvariantCulture) + " (" + src + ")"); }
             st.Rpm = Math.Max(0f, Math.Min(1f, rpm / Math.Max(0.1f, S.FullRpm)));
